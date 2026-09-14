@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/Button";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { authService } from "@/features/auth/services/auth.service";
 
+
 export function DashboardPage() {
   const { user } = useAuth();
 

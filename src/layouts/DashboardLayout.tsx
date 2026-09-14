@@ -1,16 +1,17 @@
 import { Outlet } from "react-router-dom";
+import AppSidebar from "@/components/layout/AppSidebar";
 
 export default function DashboardLayout() {
   return (
-    <div className="min-h-screen bg-slate-100">
-      <header className="border-b bg-white px-6 py-4">
-        <h1 className="text-xl font-bold text-slate-900">
-          Gym Management
-        </h1>
-      </header>
+    <div className="flex min-h-screen bg-muted/20">
+      {/* Desktop Sidebar */}
+      <AppSidebar />
 
-      <main className="p-6">
-        <Outlet />
+      {/* Main Content */}
+      <main className="min-w-0 flex-1">
+        <div className="mx-auto w-full max-w-[1600px] p-4 sm:p-6 lg:p-8">
+          <Outlet />
+        </div>
       </main>
     </div>
   );
