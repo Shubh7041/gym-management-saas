@@ -1,15 +1,20 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { membershipPlanSchema, type MembershipPlanFormValues } from "../schemas/membership-plan.schema";
-
+import {
+  membershipPlanSchema,
+  type MembershipPlanFormValues,
+} from "../schemas/membership-plan.schema";
+import { useEffect } from "react";
 
 interface MembershipPlanFormProps {
+  defaultValues?: Partial<MembershipPlanFormValues>;
   loading?: boolean;
   onSubmit: (values: MembershipPlanFormValues) => Promise<void>;
   onCancel: () => void;
 }
 
 export default function MembershipPlanForm({
+  defaultValues,
   loading = false,
   onSubmit,
   onCancel,
@@ -17,6 +22,7 @@ export default function MembershipPlanForm({
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<MembershipPlanFormValues>({
     resolver: zodResolver(membershipPlanSchema),
@@ -26,22 +32,28 @@ export default function MembershipPlanForm({
       duration_days: 30,
       price: 1500,
       status: "active",
+      ...defaultValues,
     },
   });
 
+  useEffect(() => {
+    if (defaultValues) {
+      reset({
+        name: defaultValues.name ?? "",
+        description: defaultValues.description ?? "",
+        duration_days: defaultValues.duration_days ?? 30,
+        price: defaultValues.price ?? 1500,
+        status: defaultValues.status ?? "active",
+      });
+    }
+  }, [defaultValues, reset]);
+
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="space-y-6"
-    >
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="grid gap-5 sm:grid-cols-2">
         <div className="space-y-2">
-          <label
-            htmlFor="name"
-            className="text-sm font-medium"
-          >
-            Plan Name{" "}
-            <span className="text-destructive">*</span>
+          <label htmlFor="name" className="text-sm font-medium">
+            Plan Name <span className="text-destructive">*</span>
           </label>
 
           <input
@@ -49,26 +61,18 @@ export default function MembershipPlanForm({
             {...register("name")}
             placeholder="Monthly"
             className={`h-10 w-full rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-primary/20 ${
-              errors.name
-                ? "border-destructive focus:ring-destructive/20"
-                : ""
+              errors.name ? "border-destructive focus:ring-destructive/20" : ""
             }`}
           />
 
           {errors.name && (
-            <p className="text-sm text-destructive">
-              {errors.name.message}
-            </p>
+            <p className="text-sm text-destructive">{errors.name.message}</p>
           )}
         </div>
 
         <div className="space-y-2">
-          <label
-            htmlFor="duration_days"
-            className="text-sm font-medium"
-          >
-            Duration in Days{" "}
-            <span className="text-destructive">*</span>
+          <label htmlFor="duration_days" className="text-sm font-medium">
+            Duration in Days <span className="text-destructive">*</span>
           </label>
 
           <input
@@ -93,12 +97,8 @@ export default function MembershipPlanForm({
         </div>
 
         <div className="space-y-2">
-          <label
-            htmlFor="price"
-            className="text-sm font-medium"
-          >
-            Price{" "}
-            <span className="text-destructive">*</span>
+          <label htmlFor="price" className="text-sm font-medium">
+            Price <span className="text-destructive">*</span>
           </label>
 
           <input
@@ -110,24 +110,17 @@ export default function MembershipPlanForm({
               valueAsNumber: true,
             })}
             className={`h-10 w-full rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-primary/20 ${
-              errors.price
-                ? "border-destructive focus:ring-destructive/20"
-                : ""
+              errors.price ? "border-destructive focus:ring-destructive/20" : ""
             }`}
           />
 
           {errors.price && (
-            <p className="text-sm text-destructive">
-              {errors.price.message}
-            </p>
+            <p className="text-sm text-destructive">{errors.price.message}</p>
           )}
         </div>
 
         <div className="space-y-2">
-          <label
-            htmlFor="status"
-            className="text-sm font-medium"
-          >
+          <label htmlFor="status" className="text-sm font-medium">
             Status
           </label>
 
@@ -143,10 +136,7 @@ export default function MembershipPlanForm({
       </div>
 
       <div className="space-y-2">
-        <label
-          htmlFor="description"
-          className="text-sm font-medium"
-        >
+        <label htmlFor="description" className="text-sm font-medium">
           Description
         </label>
 

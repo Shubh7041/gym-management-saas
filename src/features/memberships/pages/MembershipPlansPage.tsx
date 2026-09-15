@@ -72,9 +72,7 @@ export default function MembershipPlansPage() {
 
       {!loading && !error && plans.length === 0 && (
         <div className="rounded-xl border border-dashed bg-background p-10 text-center">
-          <h2 className="text-base font-semibold">
-            No membership plans yet
-          </h2>
+          <h2 className="text-base font-semibold">No membership plans yet</h2>
 
           <p className="mt-2 text-sm text-muted-foreground">
             Create your first membership plan to get started.
@@ -97,21 +95,13 @@ export default function MembershipPlansPage() {
             <table className="w-full min-w-[650px] text-sm">
               <thead className="border-b bg-muted/40">
                 <tr className="text-left">
-                  <th className="px-4 py-3 font-medium">
-                    Plan Name
-                  </th>
+                  <th className="px-4 py-3 font-medium">Plan Name</th>
 
-                  <th className="px-4 py-3 font-medium">
-                    Duration
-                  </th>
+                  <th className="px-4 py-3 font-medium">Duration</th>
 
-                  <th className="px-4 py-3 font-medium">
-                    Price
-                  </th>
+                  <th className="px-4 py-3 font-medium">Price</th>
 
-                  <th className="px-4 py-3 font-medium">
-                    Status
-                  </th>
+                  <th className="px-4 py-3 font-medium">Status</th>
                 </tr>
               </thead>
 
@@ -120,7 +110,15 @@ export default function MembershipPlansPage() {
                   <tr key={plan.id} className="hover:bg-muted/20">
                     <td className="px-4 py-4">
                       <div className="font-medium">
-                        {plan.name}
+                        <button
+                          type="button"
+                          onClick={() =>
+                            navigate(`/dashboard/membership-plans/${plan.id}`)
+                          }
+                          className="font-medium hover:underline"
+                        >
+                          {plan.name}
+                        </button>
                       </div>
 
                       {plan.description && (
@@ -130,9 +128,7 @@ export default function MembershipPlansPage() {
                       )}
                     </td>
 
-                    <td className="px-4 py-4">
-                      {plan.duration_days} days
-                    </td>
+                    <td className="px-4 py-4">{plan.duration_days} days</td>
 
                     <td className="px-4 py-4 font-medium">
                       ₹{Number(plan.price).toLocaleString("en-IN")}
@@ -148,6 +144,19 @@ export default function MembershipPlansPage() {
                       >
                         {capitalize(plan.status)}
                       </span>
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          navigate(
+                            `/dashboard/membership-plans/${plan.id}/edit`,
+                          )
+                        }
+                        className="rounded-md border px-3 py-1.5 text-sm hover:bg-muted"
+                      >
+                        Edit
+                      </button>
                     </td>
                   </tr>
                 ))}
