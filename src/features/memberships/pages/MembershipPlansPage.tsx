@@ -35,6 +35,38 @@ export default function MembershipPlansPage() {
     loadPlans();
   }, []);
 
+  async function handleToggleStatus(plan: MembershipPlan) {
+    const nextStatus = plan.status === "active" ? "inactive" : "active";
+
+    const confirmed = window.confirm(
+      nextStatus === "inactive"
+        ? `Deactivate "${plan.name}"? It will no longer be available for new memberships.`
+        : `Activate "${plan.name}"? It will become available for new memberships.`,
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await membershipPlansService.updatePlan(plan.id, {
+        status: nextStatus,
+      });
+
+      setPlans((currentPlans) =>
+        currentPlans.map((currentPlan) =>
+          currentPlan.id === plan.id
+            ? { ...currentPlan, status: nextStatus }
+            : currentPlan,
+        ),
+      );
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to update membership plan status.",
+      );
+    }
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -146,17 +178,37 @@ export default function MembershipPlansPage() {
                       </span>
                     </td>
                     <td className="px-4 py-3 text-right">
-                      <button
-                        type="button"
-                        onClick={() =>
-                          navigate(
-                            `/dashboard/membership-plans/${plan.id}/edit`,
-                          )
-                        }
-                        className="rounded-md border px-3 py-1.5 text-sm hover:bg-muted"
-                      >
-                        Edit
-                      </button>
+                      <div className="flex justify-end gap-2">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            navigate(`/dashboard/membership-plans/${plan.id}`)
+                          }
+                          className="rounded-md border px-3 py-1.5 text-sm hover:bg-muted"
+                        >
+                          View
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() =>
+                            navigate(
+                              `/dashboard/membership-plans/${plan.id}/edit`,
+                            )
+                          }
+                          className="rounded-md border px-3 py-1.5 text-sm hover:bg-muted"
+                        >
+                          Edit
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => void handleToggleStatus(plan)}
+                          className="rounded-md border px-3 py-1.5 text-sm hover:bg-muted"
+                        >
+                          {plan.status === "active" ? "Deactivate" : "Activate"}
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
