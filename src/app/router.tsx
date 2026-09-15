@@ -5,6 +5,9 @@ import { LoginPage } from "@/features/auth/pages/LoginPage";
 import { DashboardPage } from "@/pages/DashboardPage";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import MembersPage from "@/features/members/pages/MembersPage";
+import AddMemberPage from "@/features/members/pages/AddMemberPage";
+import MemberDetailsPage from "@/features/members/pages/MemberDetailsPage";
+import EditMemberPage from "@/features/members/pages/EditMemberPage";
 
 export const router = createBrowserRouter([
   {
@@ -26,6 +29,18 @@ export const router = createBrowserRouter([
           {
             path: "members",
             element: <MembersPage />,
+          },
+          {
+            path: "members/new",
+            element: <AddMemberPage />,
+          },
+          {
+            path: "members/:id",
+            element: <MemberDetailsPage />,
+          },
+          {
+            path: "members/:id/edit",
+            element: <EditMemberPage />,
           },
         ],
       },

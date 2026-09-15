@@ -49,10 +49,7 @@ export const membersService = {
     return data;
   },
 
-  async updateMember(
-    id: string,
-    input: UpdateMemberInput
-  ): Promise<Member> {
+  async updateMember(id: string, input: UpdateMemberInput): Promise<Member> {
     const { data, error } = await supabase
       .from(MEMBERS_TABLE)
       .update(input)
@@ -68,13 +65,22 @@ export const membersService = {
   },
 
   async deleteMember(id: string): Promise<void> {
-    const { error } = await supabase
-      .from(MEMBERS_TABLE)
-      .delete()
-      .eq("id", id);
+    const { error } = await supabase.from(MEMBERS_TABLE).delete().eq("id", id);
 
     if (error) {
       throw new Error(error.message);
     }
+  },
+
+  async generateMemberCode(tenantId: string): Promise<string> {
+    const { data, error } = await supabase.rpc("generate_member_code", {
+      p_tenant_id: tenantId,
+    });
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return data;
   },
 };

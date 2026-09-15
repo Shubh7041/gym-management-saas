@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { membersService } from "../services/members.service";
 import type { Member } from "../types/member.types";
+import { useNavigate } from "react-router-dom";
 
 export default function MembersPage() {
   const [members, setMembers] = useState<Member[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadMembers = async () => {
@@ -18,9 +20,7 @@ export default function MembersPage() {
         setMembers(data);
       } catch (err) {
         setError(
-          err instanceof Error
-            ? err.message
-            : "Failed to load members."
+          err instanceof Error ? err.message : "Failed to load members.",
         );
       } finally {
         setLoading(false);
@@ -35,9 +35,7 @@ export default function MembersPage() {
       {/* Page Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">
-            Members
-          </h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Members</h1>
 
           <p className="text-sm text-muted-foreground">
             Manage your gym members.
@@ -46,6 +44,7 @@ export default function MembersPage() {
 
         <button
           type="button"
+          onClick={() => navigate("/dashboard/members/new")}
           className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
         >
           Add Member
@@ -84,39 +83,33 @@ export default function MembersPage() {
             <table className="w-full min-w-[700px] text-sm">
               <thead className="border-b bg-muted/50">
                 <tr>
-                  <th className="px-4 py-3 text-left font-medium">
-                    Member
-                  </th>
+                  <th className="px-4 py-3 text-left font-medium">Member</th>
 
                   <th className="px-4 py-3 text-left font-medium">
                     Member Code
                   </th>
 
-                  <th className="px-4 py-3 text-left font-medium">
-                    Phone
-                  </th>
+                  <th className="px-4 py-3 text-left font-medium">Phone</th>
 
-                  <th className="px-4 py-3 text-left font-medium">
-                    Join Date
-                  </th>
+                  <th className="px-4 py-3 text-left font-medium">Join Date</th>
 
-                  <th className="px-4 py-3 text-left font-medium">
-                    Status
-                  </th>
+                  <th className="px-4 py-3 text-left font-medium">Status</th>
                 </tr>
               </thead>
 
               <tbody className="divide-y">
                 {members.map((member) => (
-                  <tr
-                    key={member.id}
-                    className="hover:bg-muted/30"
-                  >
+                  <tr key={member.id} className="hover:bg-muted/30">
                     <td className="px-4 py-3">
-                      <div className="font-medium">
-                        {member.first_name}{" "}
-                        {member.last_name ?? ""}
-                      </div>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          navigate(`/dashboard/members/${member.id}`)
+                        }
+                        className="text-left font-medium hover:underline"
+                      >
+                        {member.first_name} {member.last_name}
+                      </button>
 
                       {member.email && (
                         <div className="text-xs text-muted-foreground">
@@ -125,17 +118,11 @@ export default function MembersPage() {
                       )}
                     </td>
 
-                    <td className="px-4 py-3">
-                      {member.member_code}
-                    </td>
+                    <td className="px-4 py-3">{member.member_code}</td>
 
-                    <td className="px-4 py-3">
-                      {member.phone ?? "-"}
-                    </td>
+                    <td className="px-4 py-3">{member.phone ?? "-"}</td>
 
-                    <td className="px-4 py-3">
-                      {member.join_date}
-                    </td>
+                    <td className="px-4 py-3">{member.join_date}</td>
 
                     <td className="px-4 py-3">
                       <span
