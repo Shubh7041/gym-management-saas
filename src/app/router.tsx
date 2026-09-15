@@ -8,6 +8,8 @@ import MembersPage from "@/features/members/pages/MembersPage";
 import AddMemberPage from "@/features/members/pages/AddMemberPage";
 import MemberDetailsPage from "@/features/members/pages/MemberDetailsPage";
 import EditMemberPage from "@/features/members/pages/EditMemberPage";
+import AddMembershipPlanPage from "@/features/memberships/pages/AddMembershipPlanPage";
+import MembershipPlansPage from "@/features/memberships/pages/MembershipPlansPage";
 
 export const router = createBrowserRouter([
   {
@@ -41,6 +43,14 @@ export const router = createBrowserRouter([
           {
             path: "members/:id/edit",
             element: <EditMemberPage />,
+          },
+          {
+            path: "membership-plans/new",
+            element: <AddMembershipPlanPage />,
+          },
+          {
+            path: "membership-plans",
+            element: <MembershipPlansPage />,
           },
         ],
       },

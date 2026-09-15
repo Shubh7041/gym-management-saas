@@ -23,10 +23,15 @@ const navigationItems = [
     href: "/dashboard/members",
     icon: Users,
   },
+  // {
+  //   label: "Memberships",
+  //   href: "/dashboard/memberships",
+  //   icon: UserCheck,
+  // },
   {
-    label: "Memberships",
-    href: "/dashboard/memberships",
-    icon: UserCheck,
+    label: "Membership Plans",
+    href: "/dashboard/membership-plans",
+    icon: CreditCard,
   },
   {
     label: "Payments",
@@ -237,9 +242,7 @@ export default function AppSidebar({
         <div className="border-t p-4">
           <div className="rounded-lg bg-muted/50 p-3">
             <p className="text-xs font-medium">Gym Management SaaS</p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              Pilot version
-            </p>
+            <p className="mt-1 text-xs text-muted-foreground">Pilot version</p>
           </div>
         </div>
       </aside>
