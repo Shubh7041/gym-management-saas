@@ -1,9 +1,4 @@
-import {
-  useEffect,
-  useMemo,
-  useState,
-  type ReactNode,
-} from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 
 import { supabase } from "@/lib/supabase/client";
 import { AuthContext } from "./AuthContext";
@@ -25,7 +20,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const {
         data: { session },
       } = await supabase.auth.getSession();
-
+      console.log("INITIAL SESSION:", session);
       if (isMounted) {
         setUser(session?.user ?? null);
         setIsLoading(false);
@@ -37,6 +32,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
+      console.log("AUTH EVENT:", event);
+      console.log("AUTH SESSION:", session);
       setUser(session?.user ?? null);
       setIsLoading(false);
     });
@@ -56,9 +53,5 @@ export function AuthProvider({ children }: AuthProviderProps) {
     [user, isLoading],
   );
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
