@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 
 import { ProtectedRoute } from "@/features/auth/components/ProtectedRoute";
 import { LoginPage } from "@/features/auth/pages/LoginPage";
@@ -14,7 +14,6 @@ import EditMembershipPlanPage from "@/features/memberships/pages/EditMembershipP
 import MembershipPlanDetailsPage from "@/features/memberships/pages/MembershipPlanDetailsPage";
 import AddMemberSubscriptionPage from "@/features/memberships/pages/AddMemberSubscriptionPage";
 import { PublicRoute } from "@/features/auth/components/PublicRoute";
-
 
 export const router = createBrowserRouter([
   {
@@ -78,7 +77,10 @@ export const router = createBrowserRouter([
       },
     ],
   },
-
+  {
+    path: "*",
+    element: <Navigate to="/login" replace />,
+  },
   // {
   //   path: "*",
   //   element: <LoginPage />,
