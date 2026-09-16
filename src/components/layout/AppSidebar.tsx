@@ -6,7 +6,7 @@ import {
   Dumbbell,
   LayoutDashboard,
   Settings,
-  UserCheck,
+  // UserCheck,
   Users,
   X,
 } from "lucide-react";
