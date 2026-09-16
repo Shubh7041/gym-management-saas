@@ -17,12 +17,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
     let isMounted = true;
 
     const initializeAuth = async () => {
-      console.log("SUPABASE CLIENT:", supabase);
 
       const {
         data: { session },
       } = await supabase.auth.getSession();
-      console.log("INITIAL SESSION:", session);
       if (isMounted) {
         setUser(session?.user ?? null);
         setIsLoading(false);
@@ -34,8 +32,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      console.log("AUTH EVENT:", event);
-      console.log("AUTH SESSION:", session);
       setUser(session?.user ?? null);
       setIsLoading(false);
     });
