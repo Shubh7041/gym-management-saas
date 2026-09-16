@@ -13,11 +13,17 @@ import MembershipPlansPage from "@/features/memberships/pages/MembershipPlansPag
 import EditMembershipPlanPage from "@/features/memberships/pages/EditMembershipPlanPage";
 import MembershipPlanDetailsPage from "@/features/memberships/pages/MembershipPlanDetailsPage";
 import AddMemberSubscriptionPage from "@/features/memberships/pages/AddMemberSubscriptionPage";
+import { PublicRoute } from "@/features/auth/components/PublicRoute";
 
 export const router = createBrowserRouter([
   {
-    path: "/login",
-    element: <LoginPage />,
+    element: <PublicRoute />,
+    children: [
+      {
+        path: "/login",
+        element: <LoginPage />,
+      },
+    ],
   },
 
   {
