@@ -15,6 +15,7 @@ import MembershipPlanDetailsPage from "@/features/memberships/pages/MembershipPl
 import AddMemberSubscriptionPage from "@/features/memberships/pages/AddMemberSubscriptionPage";
 import { PublicRoute } from "@/features/auth/components/PublicRoute";
 
+
 export const router = createBrowserRouter([
   {
     element: <PublicRoute />,
