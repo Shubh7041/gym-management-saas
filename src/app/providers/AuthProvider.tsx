@@ -17,6 +17,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     let isMounted = true;
 
     const initializeAuth = async () => {
+      console.log("SUPABASE CLIENT:", supabase);
+
       const {
         data: { session },
       } = await supabase.auth.getSession();

@@ -8,7 +8,8 @@ export const authService = {
       email: credentials.email,
       password: credentials.password,
     });
-
+    console.log("SIGN IN DATA:", data);
+    console.log("SIGN IN ERROR:", error);
     if (error) {
       throw new Error(error.message);
     }
