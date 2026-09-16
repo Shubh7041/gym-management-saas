@@ -14,8 +14,9 @@ export default function MemberSubscriptionDetailsPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  const [subscription, setSubscription] =
-    useState<MemberSubscription | null>(null);
+  const [subscription, setSubscription] = useState<MemberSubscription | null>(
+    null,
+  );
 
   const [member, setMember] = useState<Member | null>(null);
   const [plan, setPlan] = useState<MembershipPlan | null>(null);
@@ -61,14 +62,11 @@ export default function MemberSubscriptionDetailsPage() {
   }, [id]);
 
   const formatDate = (date: string) => {
-    return new Date(`${date}T00:00:00`).toLocaleDateString(
-      "en-IN",
-      {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-      },
-    );
+    return new Date(`${date}T00:00:00`).toLocaleDateString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
   };
 
   const formatAmount = (amount: number) => {
@@ -125,6 +123,12 @@ export default function MemberSubscriptionDetailsPage() {
           >
             Back
           </Link>
+          <Link
+            to={`/dashboard/subscriptions/${subscription.id}/renew`}
+            className="rounded-md border border-slate-900 px-4 py-2 text-sm font-medium text-slate-900 hover:bg-slate-50"
+          >
+            Renew Subscription
+          </Link>
 
           <Link
             to={`/dashboard/subscriptions/${subscription.id}/edit`}
@@ -148,9 +152,7 @@ export default function MemberSubscriptionDetailsPage() {
             <p className="mt-1 font-medium text-slate-900">
               {member
                 ? `${member.first_name}${
-                    member.last_name
-                      ? ` ${member.last_name}`
-                      : ""
+                    member.last_name ? ` ${member.last_name}` : ""
                   }`
                 : "Unknown member"}
             </p>
@@ -201,9 +203,7 @@ export default function MemberSubscriptionDetailsPage() {
           <div>
             <p className="text-sm text-slate-500">Created</p>
             <p className="mt-1 font-medium text-slate-900">
-              {new Date(subscription.created_at).toLocaleString(
-                "en-IN",
-              )}
+              {new Date(subscription.created_at).toLocaleString("en-IN")}
             </p>
           </div>
         </div>

@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 import MemberSubscriptionForm from "../components/MemberSubscriptionForm";
 
 import { memberSubscriptionsService } from "../services/member-subscriptions.service";
-
 import { membershipPlansService } from "../services/membership-plans.service";
 
 import { membersService } from "@/features/members/services/members.service";
@@ -17,10 +16,12 @@ import { useAppStore } from "@/stores/app.store";
 
 export default function AddMemberSubscriptionPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const currentTenant = useAppStore((state) => state.currentTenant);
-
   const selectedBranchId = useAppStore((state) => state.selectedBranchId);
+
+  const memberIdFromUrl = searchParams.get("memberId");
 
   const [members, setMembers] = useState<Member[]>([]);
   const [plans, setPlans] = useState<MembershipPlan[]>([]);
@@ -68,10 +69,30 @@ export default function AddMemberSubscriptionPage() {
       setError("No active gym selected.");
       return;
     }
+    const today = new Date().toISOString().split("T")[0];
 
+    if (values.status === "active" && values.start_date < today) {
+      setError("An active subscription cannot start before today.");
+      return;
+    }
     try {
       setSaving(true);
       setError(null);
+
+      // Check for overlapping active subscription
+      const hasOverlap =
+        await memberSubscriptionsService.checkSubscriptionOverlap(
+          values.member_id,
+          values.start_date,
+          values.end_date,
+        );
+
+      if (hasOverlap) {
+        setError(
+          "This member already has an active subscription during the selected dates.",
+        );
+        return;
+      }
 
       await memberSubscriptionsService.createSubscription({
         tenant_id: currentTenant.id,
@@ -92,7 +113,6 @@ export default function AddMemberSubscriptionPage() {
       setSaving(false);
     }
   }
-
   if (loading) {
     return (
       <div className="p-6 text-sm text-muted-foreground">
@@ -100,6 +120,12 @@ export default function AddMemberSubscriptionPage() {
       </div>
     );
   }
+
+  const defaultValues: Partial<MemberSubscriptionFormValues> = memberIdFromUrl
+    ? {
+        member_id: memberIdFromUrl,
+      }
+    : {};
 
   return (
     <div className="max-w-2xl space-y-6 p-6">
@@ -116,6 +142,7 @@ export default function AddMemberSubscriptionPage() {
       <MemberSubscriptionForm
         members={members}
         plans={plans}
+        defaultValues={defaultValues}
         loading={saving}
         onSubmit={handleSubmit}
         onCancel={() => navigate("/dashboard/subscriptions")}

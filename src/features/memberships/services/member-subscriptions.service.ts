@@ -22,9 +22,7 @@ export const memberSubscriptionsService = {
     return data ?? [];
   },
 
-  async getSubscriptionById(
-    id: string,
-  ): Promise<MemberSubscription> {
+  async getSubscriptionById(id: string): Promise<MemberSubscription> {
     const { data, error } = await supabase
       .from(MEMBER_SUBSCRIPTIONS_TABLE)
       .select("*")
@@ -52,6 +50,38 @@ export const memberSubscriptionsService = {
     }
 
     return data ?? [];
+  },
+
+  async checkSubscriptionOverlap(
+    memberId: string,
+    startDate: string,
+    endDate: string,
+    excludeSubscriptionId?: string,
+  ): Promise<boolean> {
+    const { data, error } = await supabase.rpc("check_subscription_overlap", {
+      p_member_id: memberId,
+      p_start_date: startDate,
+      p_end_date: endDate,
+      p_exclude_subscription_id: excludeSubscriptionId ?? null,
+    });
+    console.log("OVERLAP CHECK INPUT:", {
+      memberId,
+      startDate,
+      endDate,
+      excludeSubscriptionId,
+    });
+
+    console.log("OVERLAP CHECK RESULT:", {
+      data,
+      error,
+    });
+
+    if (error) {
+      console.error("OVERLAP RPC ERROR:", error);
+      throw new Error(error.message);
+    }
+
+    return Boolean(data);
   },
 
   async createSubscription(

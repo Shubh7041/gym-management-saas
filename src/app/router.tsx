@@ -17,6 +17,7 @@ import { PublicRoute } from "@/features/auth/components/PublicRoute";
 import MemberSubscriptionsPage from "@/features/memberships/pages/MemberSubscriptionsPage";
 import MemberSubscriptionDetailsPage from "@/features/memberships/pages/MemberSubscriptionDetailsPage";
 import EditMemberSubscriptionPage from "@/features/memberships/pages/EditMemberSubscriptionPage";
+import RenewMemberSubscriptionPage from "@/features/memberships/pages/RenewMemberSubscriptionPage";
 
 export const router = createBrowserRouter([
   {
@@ -87,6 +88,14 @@ export const router = createBrowserRouter([
           {
             path: "subscriptions/new",
             element: <AddMemberSubscriptionPage />,
+          },
+          // {
+          //   path: "subscriptions/:id/renew",
+          //   element: <MemberSubscriptionsPage />,
+          // },
+          {
+            path: "subscriptions/:id/renew",
+            element: <RenewMemberSubscriptionPage />,
           },
         ],
       },

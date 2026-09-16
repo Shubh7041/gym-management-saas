@@ -16,8 +16,9 @@ export default function EditMemberSubscriptionPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  const [subscription, setSubscription] =
-    useState<MemberSubscription | null>(null);
+  const [subscription, setSubscription] = useState<MemberSubscription | null>(
+    null,
+  );
 
   const [members, setMembers] = useState<Member[]>([]);
   const [plans, setPlans] = useState<MembershipPlan[]>([]);
@@ -63,9 +64,7 @@ export default function EditMemberSubscriptionPage() {
     loadData();
   }, [id]);
 
-  const handleSubmit = async (
-    values: MemberSubscriptionFormValues,
-  ) => {
+  const handleSubmit = async (values: MemberSubscriptionFormValues) => {
     if (!id) {
       return;
     }
@@ -74,16 +73,28 @@ export default function EditMemberSubscriptionPage() {
       setIsSaving(true);
       setError("");
 
-      await memberSubscriptionsService.updateSubscription(
-        id,
-        {
-          plan_id: values.plan_id,
-          start_date: values.start_date,
-          end_date: values.end_date,
-          amount: values.amount,
-          status: values.status,
-        },
-      );
+      const hasOverlap =
+        await memberSubscriptionsService.checkSubscriptionOverlap(
+          values.member_id,
+          values.start_date,
+          values.end_date,
+          id,
+        );
+
+      if (hasOverlap) {
+        setError(
+          "This member already has another active subscription during the selected dates.",
+        );
+        return;
+      }
+
+      await memberSubscriptionsService.updateSubscription(id, {
+        plan_id: values.plan_id,
+        start_date: values.start_date,
+        end_date: values.end_date,
+        amount: values.amount,
+        status: values.status,
+      });
 
       navigate(`/dashboard/subscriptions/${id}`);
     } catch (error) {
@@ -114,9 +125,7 @@ export default function EditMemberSubscriptionPage() {
 
         <button
           type="button"
-          onClick={() =>
-            navigate("/dashboard/subscriptions")
-          }
+          onClick={() => navigate("/dashboard/subscriptions")}
           className="rounded-md border px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
         >
           Back to Subscriptions
@@ -125,15 +134,14 @@ export default function EditMemberSubscriptionPage() {
     );
   }
 
-  const defaultValues: Partial<MemberSubscriptionFormValues> =
-    {
-      member_id: subscription.member_id,
-      plan_id: subscription.plan_id,
-      start_date: subscription.start_date,
-      end_date: subscription.end_date,
-      amount: subscription.amount,
-      status: subscription.status,
-    };
+  const defaultValues: Partial<MemberSubscriptionFormValues> = {
+    member_id: subscription.member_id,
+    plan_id: subscription.plan_id,
+    start_date: subscription.start_date,
+    end_date: subscription.end_date,
+    amount: subscription.amount,
+    status: subscription.status,
+  };
 
   return (
     <div className="space-y-6">
@@ -161,9 +169,7 @@ export default function EditMemberSubscriptionPage() {
           loading={isSaving}
           isEditMode
           onSubmit={handleSubmit}
-          onCancel={() =>
-            navigate(`/dashboard/subscriptions/${id}`)
-          }
+          onCancel={() => navigate(`/dashboard/subscriptions/${id}`)}
         />
       </div>
     </div>
