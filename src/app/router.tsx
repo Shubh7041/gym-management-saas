@@ -16,6 +16,7 @@ import AddMemberSubscriptionPage from "@/features/memberships/pages/AddMemberSub
 import { PublicRoute } from "@/features/auth/components/PublicRoute";
 import MemberSubscriptionsPage from "@/features/memberships/pages/MemberSubscriptionsPage";
 import MemberSubscriptionDetailsPage from "@/features/memberships/pages/MemberSubscriptionDetailsPage";
+import EditMemberSubscriptionPage from "@/features/memberships/pages/EditMemberSubscriptionPage";
 
 export const router = createBrowserRouter([
   {
@@ -78,6 +79,10 @@ export const router = createBrowserRouter([
           {
             path: "subscriptions/:id",
             element: <MemberSubscriptionDetailsPage />,
+          },
+          {
+            path: "subscriptions/:id/edit",
+            element: <EditMemberSubscriptionPage />,
           },
           {
             path: "subscriptions/new",
