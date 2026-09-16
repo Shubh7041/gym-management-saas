@@ -14,6 +14,8 @@ import EditMembershipPlanPage from "@/features/memberships/pages/EditMembershipP
 import MembershipPlanDetailsPage from "@/features/memberships/pages/MembershipPlanDetailsPage";
 import AddMemberSubscriptionPage from "@/features/memberships/pages/AddMemberSubscriptionPage";
 import { PublicRoute } from "@/features/auth/components/PublicRoute";
+import MemberSubscriptionsPage from "@/features/memberships/pages/MemberSubscriptionsPage";
+import MemberSubscriptionDetailsPage from "@/features/memberships/pages/MemberSubscriptionDetailsPage";
 
 export const router = createBrowserRouter([
   {
@@ -68,6 +70,14 @@ export const router = createBrowserRouter([
           {
             path: "membership-plans/:id",
             element: <MembershipPlanDetailsPage />,
+          },
+          {
+            path: "subscriptions",
+            element: <MemberSubscriptionsPage />,
+          },
+          {
+            path: "subscriptions/:id",
+            element: <MemberSubscriptionDetailsPage />,
           },
           {
             path: "subscriptions/new",

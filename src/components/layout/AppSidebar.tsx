@@ -9,10 +9,17 @@ import {
   // UserCheck,
   Users,
   X,
+  type LucideIcon,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
-const navigationItems = [
+type NavigationItem = {
+  label: string;
+  href: string;
+  icon: LucideIcon;
+};
+
+const navigationItems: NavigationItem[] = [
   {
     label: "Dashboard",
     href: "/dashboard",
@@ -31,6 +38,11 @@ const navigationItems = [
   {
     label: "Membership Plans",
     href: "/dashboard/membership-plans",
+    icon: CreditCard,
+  },
+  {
+    label: "Subscriptions",
+    href: "/dashboard/subscriptions",
     icon: CreditCard,
   },
   {
