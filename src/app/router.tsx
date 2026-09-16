@@ -79,8 +79,8 @@ export const router = createBrowserRouter([
     ],
   },
 
-  {
-    path: "*",
-    element: <LoginPage />,
-  },
+  // {
+  //   path: "*",
+  //   element: <LoginPage />,
+  // },
 ]);
