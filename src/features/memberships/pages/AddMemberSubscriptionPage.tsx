@@ -1,4 +1,11 @@
 import { useEffect, useState } from "react";
+import {
+  AlertCircle,
+  ArrowLeft,
+  CreditCard,
+  Loader2,
+  Plus,
+} from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import MemberSubscriptionForm from "../components/MemberSubscriptionForm";
@@ -18,8 +25,13 @@ export default function AddMemberSubscriptionPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  const currentTenant = useAppStore((state) => state.currentTenant);
-  const selectedBranchId = useAppStore((state) => state.selectedBranchId);
+  const currentTenant = useAppStore(
+    (state) => state.currentTenant,
+  );
+
+  const selectedBranchId = useAppStore(
+    (state) => state.selectedBranchId,
+  );
 
   const memberIdFromUrl = searchParams.get("memberId");
 
@@ -44,12 +56,17 @@ export default function AddMemberSubscriptionPage() {
         setMembers(
           selectedBranchId
             ? membersData.filter(
-                (member) => member.branch_id === selectedBranchId,
+                (member) =>
+                  member.branch_id === selectedBranchId,
               )
             : membersData,
         );
 
-        setPlans(plansData.filter((plan) => plan.status === "active"));
+        setPlans(
+          plansData.filter(
+            (plan) => plan.status === "active",
+          ),
+        );
       } catch (err) {
         setError(
           err instanceof Error
@@ -64,22 +81,32 @@ export default function AddMemberSubscriptionPage() {
     void loadData();
   }, [selectedBranchId]);
 
-  async function handleSubmit(values: MemberSubscriptionFormValues) {
+  async function handleSubmit(
+    values: MemberSubscriptionFormValues,
+  ) {
     if (!currentTenant) {
       setError("No active gym selected.");
       return;
     }
-    const today = new Date().toISOString().split("T")[0];
 
-    if (values.status === "active" && values.start_date < today) {
-      setError("An active subscription cannot start before today.");
+    const today = new Date()
+      .toISOString()
+      .split("T")[0];
+
+    if (
+      values.status === "active" &&
+      values.start_date < today
+    ) {
+      setError(
+        "An active subscription cannot start before today.",
+      );
       return;
     }
+
     try {
       setSaving(true);
       setError(null);
 
-      // Check for overlapping active subscription
       const hasOverlap =
         await memberSubscriptionsService.checkSubscriptionOverlap(
           values.member_id,
@@ -107,46 +134,142 @@ export default function AddMemberSubscriptionPage() {
       navigate("/dashboard/subscriptions");
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Failed to create subscription.",
+        err instanceof Error
+          ? err.message
+          : "Failed to create subscription.",
       );
     } finally {
       setSaving(false);
     }
   }
+
+  /* ---------------------------------------------------------------------- */
+  /* Loading                                                                 */
+  /* ---------------------------------------------------------------------- */
+
   if (loading) {
     return (
-      <div className="p-6 text-sm text-muted-foreground">
-        Loading subscription data...
+      <div className="space-y-6">
+        <div className="flex items-center gap-3">
+          <div className="h-9 w-9 animate-pulse rounded-xl bg-slate-200" />
+
+          <div className="space-y-2">
+            <div className="h-6 w-52 animate-pulse rounded bg-slate-200" />
+            <div className="h-4 w-72 animate-pulse rounded bg-slate-100" />
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+          <div className="flex items-center gap-3 text-sm text-slate-500">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            Loading subscription data...
+          </div>
+        </div>
       </div>
     );
   }
 
-  const defaultValues: Partial<MemberSubscriptionFormValues> = memberIdFromUrl
-    ? {
-        member_id: memberIdFromUrl,
-      }
-    : {};
+  const defaultValues: Partial<MemberSubscriptionFormValues> =
+    memberIdFromUrl
+      ? {
+          member_id: memberIdFromUrl,
+        }
+      : {};
 
   return (
-    <div className="max-w-2xl space-y-6 p-6">
-      <div>
-        <h1 className="text-2xl font-semibold">Create Subscription</h1>
+    <div className="space-y-6">
+      {/* ------------------------------------------------------------------ */}
+      {/* Header                                                             */}
+      {/* ------------------------------------------------------------------ */}
 
-        <p className="text-sm text-muted-foreground">
-          Assign a membership plan to a gym member.
-        </p>
+      <div className="flex items-start gap-3">
+        <button
+          type="button"
+          onClick={() =>
+            navigate("/dashboard/subscriptions")
+          }
+          className="mt-1 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-900"
+          aria-label="Back to subscriptions"
+        >
+          <ArrowLeft className="h-4 w-4" />
+        </button>
+
+        <div className="flex items-start gap-3">
+          <div className="hidden h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary sm:flex">
+            <CreditCard className="h-5 w-5" />
+          </div>
+
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+              Create Subscription
+            </h1>
+
+            <p className="mt-1 text-sm text-slate-500">
+              Assign a membership plan to a gym member.
+            </p>
+          </div>
+        </div>
       </div>
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {/* ------------------------------------------------------------------ */}
+      {/* Error                                                              */}
+      {/* ------------------------------------------------------------------ */}
 
-      <MemberSubscriptionForm
-        members={members}
-        plans={plans}
-        defaultValues={defaultValues}
-        loading={saving}
-        onSubmit={handleSubmit}
-        onCancel={() => navigate("/dashboard/subscriptions")}
-      />
+      {error && (
+        <div className="rounded-2xl border border-red-200 bg-red-50 p-4 shadow-sm">
+          <div className="flex items-start gap-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-600">
+              <AlertCircle className="h-4 w-4" />
+            </div>
+
+            <div>
+              <p className="text-sm font-semibold text-red-800">
+                Unable to create subscription
+              </p>
+
+              <p className="mt-1 text-sm text-red-600">
+                {error}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ------------------------------------------------------------------ */}
+      {/* Form                                                               */}
+      {/* ------------------------------------------------------------------ */}
+
+      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6 lg:p-8">
+        <div className="mb-6 border-b border-slate-100 pb-5">
+          <div className="flex items-start gap-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <Plus className="h-4 w-4" />
+            </div>
+
+            <div>
+              <h2 className="text-base font-semibold text-slate-900">
+                Subscription Details
+              </h2>
+
+              <p className="mt-1 text-sm text-slate-500">
+                Select a member and membership plan. Dates and
+                amount will be calculated from the selected plan.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <MemberSubscriptionForm
+          members={members}
+          plans={plans}
+          defaultValues={defaultValues}
+          loading={saving}
+          onSubmit={handleSubmit}
+          onCancel={() =>
+            navigate("/dashboard/subscriptions")
+          }
+        />
+      </div>
     </div>
   );
 }

@@ -1,8 +1,18 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  CalendarDays,
+  MapPin,
+  User,
+  Users,
+} from "lucide-react";
 
-import { memberSchema, type MemberFormValues } from "../schemas/member.schema";
+import {
+  memberSchema,
+  type MemberFormValues,
+} from "../schemas/member.schema";
+
 import type { Branch } from "@/features/tenanats/types/tenant.types";
 
 interface MemberFormProps {
@@ -43,7 +53,6 @@ export default function MemberForm({
       address: "",
       join_date: new Date().toISOString().split("T")[0],
       status: "active",
-
       ...defaultValues,
     },
   });
@@ -55,28 +64,36 @@ export default function MemberForm({
   }, [defaultBranchId, setValue]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-      {/* Basic Information */}
-      <section className="space-y-4">
-        <div>
-          <h2 className="text-base font-semibold">Basic Information</h2>
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="space-y-6"
+    >
+      {/* ------------------------------------------------------------------ */}
+      {/* Personal Information                                               */}
+      {/* ------------------------------------------------------------------ */}
 
-          <p className="text-sm text-muted-foreground">
-            Enter the member's basic details.
-          </p>
-        </div>
+      <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+        <SectionHeader
+          icon={User}
+          title="Personal Information"
+          description="Enter the member's basic personal details."
+        />
 
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="mt-6 grid gap-5 sm:grid-cols-2">
           {/* Branch */}
-          <div className="space-y-2">
-            <label htmlFor="branch_id" className="text-sm font-medium">
-              Branch
-            </label>
-
+          <FormField
+            label="Branch"
+            htmlFor="branch_id"
+            required
+            error={errors.branch_id?.message}
+          >
             <select
               id="branch_id"
+              disabled={loading}
               {...register("branch_id")}
-              className="h-10 w-full rounded-md border bg-background px-3 text-sm"
+              className={inputClass(
+                Boolean(errors.branch_id),
+              )}
             >
               <option value="">Select branch</option>
 
@@ -86,222 +103,231 @@ export default function MemberForm({
                 </option>
               ))}
             </select>
+          </FormField>
 
-            {errors.branch_id && (
-              <p className="text-sm text-destructive">
-                {errors.branch_id.message}
-              </p>
-            )}
-          </div>
-
+          {/* Member Code */}
           {isEditMode && (
-            <div className="space-y-2">
-              <label htmlFor="member_code" className="text-sm font-medium">
-                Member Code
-              </label>
-
+            <FormField
+              label="Member Code"
+              htmlFor="member_code"
+            >
               <input
                 id="member_code"
                 {...register("member_code")}
                 readOnly
-                className="h-10 w-full rounded-md border bg-muted px-3 text-sm text-muted-foreground"
+                className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-mono text-slate-500 outline-none"
               />
-            </div>
+            </FormField>
           )}
 
           {/* First Name */}
-          <div className="space-y-2">
-            <label htmlFor="first_name" className="text-sm font-medium">
-              First Name
-            </label>
-
+          <FormField
+            label="First Name"
+            htmlFor="first_name"
+            required
+            error={errors.first_name?.message}
+          >
             <input
               id="first_name"
               {...register("first_name")}
+              disabled={loading}
               placeholder="Enter first name"
-              className="h-10 w-full rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-primary/20"
+              className={inputClass(
+                Boolean(errors.first_name),
+              )}
             />
-
-            {errors.first_name && (
-              <p className="text-sm text-destructive">
-                {errors.first_name.message}
-              </p>
-            )}
-          </div>
+          </FormField>
 
           {/* Last Name */}
-          <div className="space-y-2">
-            <label htmlFor="last_name" className="text-sm font-medium">
-              Last Name
-            </label>
-
+          <FormField
+            label="Last Name"
+            htmlFor="last_name"
+            error={errors.last_name?.message}
+          >
             <input
               id="last_name"
               {...register("last_name")}
+              disabled={loading}
               placeholder="Enter last name"
-              className="h-10 w-full rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-primary/20"
+              className={inputClass(
+                Boolean(errors.last_name),
+              )}
             />
-
-            {errors.last_name && (
-              <p className="text-sm text-destructive">
-                {errors.last_name.message}
-              </p>
-            )}
-          </div>
+          </FormField>
 
           {/* Phone */}
-          <div className="space-y-2">
-            <label htmlFor="phone" className="text-sm font-medium">
-              Phone
-            </label>
-
+          <FormField
+            label="Phone"
+            htmlFor="phone"
+            required
+            error={errors.phone?.message}
+          >
             <input
               id="phone"
               type="tel"
               {...register("phone")}
+              disabled={loading}
               placeholder="Enter phone number"
-              className="h-10 w-full rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-primary/20"
+              className={inputClass(
+                Boolean(errors.phone),
+              )}
             />
-
-            {errors.phone && (
-              <p className="text-sm text-destructive">{errors.phone.message}</p>
-            )}
-          </div>
+          </FormField>
 
           {/* Email */}
-          <div className="space-y-2">
-            <label htmlFor="email" className="text-sm font-medium">
-              Email
-            </label>
-
+          <FormField
+            label="Email"
+            htmlFor="email"
+            error={errors.email?.message}
+          >
             <input
               id="email"
               type="email"
               {...register("email")}
+              disabled={loading}
               placeholder="member@example.com"
-              className="h-10 w-full rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-primary/20"
+              className={inputClass(
+                Boolean(errors.email),
+              )}
             />
-
-            {errors.email && (
-              <p className="text-sm text-destructive">{errors.email.message}</p>
-            )}
-          </div>
+          </FormField>
 
           {/* Date of Birth */}
-          <div className="space-y-2">
-            <label htmlFor="date_of_birth" className="text-sm font-medium">
-              Date of Birth
-            </label>
-
+          <FormField
+            label="Date of Birth"
+            htmlFor="date_of_birth"
+            error={errors.date_of_birth?.message}
+          >
             <input
               id="date_of_birth"
               type="date"
               {...register("date_of_birth")}
-              className="h-10 w-full rounded-md border bg-background px-3 text-sm"
+              disabled={loading}
+              className={inputClass(
+                Boolean(errors.date_of_birth),
+              )}
             />
-
-            {errors.date_of_birth && (
-              <p className="text-sm text-destructive">
-                {errors.date_of_birth.message}
-              </p>
-            )}
-          </div>
+          </FormField>
 
           {/* Gender */}
-          <div className="space-y-2">
-            <label htmlFor="gender" className="text-sm font-medium">
-              Gender
-            </label>
-
+          <FormField
+            label="Gender"
+            htmlFor="gender"
+            error={errors.gender?.message}
+          >
             <select
               id="gender"
               {...register("gender")}
-              className="h-10 w-full rounded-md border bg-background px-3 text-sm"
+              disabled={loading}
+              className={inputClass(
+                Boolean(errors.gender),
+              )}
             >
               <option value="">Select gender</option>
               <option value="male">Male</option>
               <option value="female">Female</option>
               <option value="other">Other</option>
             </select>
-          </div>
+          </FormField>
         </div>
       </section>
 
-      {/* Address */}
-      <section className="space-y-4">
-        <div>
-          <h2 className="text-base font-semibold">Address</h2>
+      {/* ------------------------------------------------------------------ */}
+      {/* Address                                                             */}
+      {/* ------------------------------------------------------------------ */}
 
-          <p className="text-sm text-muted-foreground">
-            Add the member's address if available.
-          </p>
-        </div>
-
-        <textarea
-          {...register("address")}
-          placeholder="Enter address"
-          rows={4}
-          className="w-full rounded-md border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/20"
+      <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+        <SectionHeader
+          icon={MapPin}
+          title="Address"
+          description="Add the member's residential address."
         />
 
-        {errors.address && (
-          <p className="text-sm text-destructive">{errors.address.message}</p>
-        )}
+        <div className="mt-6">
+          <FormField
+            label="Address"
+            htmlFor="address"
+            error={errors.address?.message}
+          >
+            <textarea
+              id="address"
+              {...register("address")}
+              disabled={loading}
+              placeholder="Enter complete address"
+              rows={4}
+              className="w-full resize-y rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition-all placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/10 disabled:cursor-not-allowed disabled:bg-slate-50"
+            />
+          </FormField>
+        </div>
       </section>
 
-      {/* Membership Details */}
-      <section className="space-y-4">
-        <div>
-          <h2 className="text-base font-semibold">Membership Details</h2>
-        </div>
+      {/* ------------------------------------------------------------------ */}
+      {/* Membership Details                                                  */}
+      {/* ------------------------------------------------------------------ */}
 
-        <div className="grid gap-4 sm:grid-cols-2">
+      <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+        <SectionHeader
+          icon={Users}
+          title="Membership Details"
+          description="Set the member's joining date and account status."
+        />
+
+        <div className="mt-6 grid gap-5 sm:grid-cols-2">
           {/* Join Date */}
-          <div className="space-y-2">
-            <label htmlFor="join_date" className="text-sm font-medium">
-              Join Date
-            </label>
+          <FormField
+            label="Join Date"
+            htmlFor="join_date"
+            required
+            error={errors.join_date?.message}
+          >
+            <div className="relative">
+              <CalendarDays className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
 
-            <input
-              id="join_date"
-              type="date"
-              {...register("join_date")}
-              className="h-10 w-full rounded-md border bg-background px-3 text-sm"
-            />
-
-            {errors.join_date && (
-              <p className="text-sm text-destructive">
-                {errors.join_date.message}
-              </p>
-            )}
-          </div>
+              <input
+                id="join_date"
+                type="date"
+                {...register("join_date")}
+                disabled={loading}
+                className={`${inputClass(
+                  Boolean(errors.join_date),
+                )} pl-10`}
+              />
+            </div>
+          </FormField>
 
           {/* Status */}
-          <div className="space-y-2">
-            <label htmlFor="status" className="text-sm font-medium">
-              Status
-            </label>
-
+          <FormField
+            label="Status"
+            htmlFor="status"
+            required
+            error={errors.status?.message}
+          >
             <select
               id="status"
               {...register("status")}
-              className="h-10 w-full rounded-md border bg-background px-3 text-sm"
+              disabled={loading}
+              className={inputClass(
+                Boolean(errors.status),
+              )}
             >
               <option value="active">Active</option>
               <option value="inactive">Inactive</option>
               <option value="blocked">Blocked</option>
             </select>
-          </div>
+          </FormField>
         </div>
       </section>
 
-      {/* Actions */}
-      <div className="flex flex-col-reverse gap-3 border-t pt-6 sm:flex-row sm:justify-end">
+      {/* ------------------------------------------------------------------ */}
+      {/* Actions                                                             */}
+      {/* ------------------------------------------------------------------ */}
+
+      <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
         <button
           type="button"
           onClick={onCancel}
           disabled={loading}
-          className="h-10 rounded-md border px-4 text-sm font-medium hover:bg-muted disabled:opacity-50"
+          className="h-11 rounded-xl border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
         >
           Cancel
         </button>
@@ -309,7 +335,7 @@ export default function MemberForm({
         <button
           type="submit"
           disabled={loading}
-          className="h-10 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
+          className="h-11 rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm transition-all hover:opacity-90 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50"
         >
           {loading
             ? isEditMode
@@ -322,4 +348,90 @@ export default function MemberForm({
       </div>
     </form>
   );
+}
+
+/* -------------------------------------------------------------------------- */
+/* Reusable UI                                                                */
+/* -------------------------------------------------------------------------- */
+
+interface SectionHeaderProps {
+  icon: React.ElementType;
+  title: string;
+  description: string;
+}
+
+function SectionHeader({
+  icon: Icon,
+  title,
+  description,
+}: SectionHeaderProps) {
+  return (
+    <div className="flex items-start gap-3">
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+        <Icon className="h-5 w-5" />
+      </div>
+
+      <div>
+        <h2 className="text-base font-semibold text-slate-900">
+          {title}
+        </h2>
+
+        <p className="mt-0.5 text-sm text-slate-500">
+          {description}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+interface FormFieldProps {
+  label: string;
+  htmlFor: string;
+  required?: boolean;
+  error?: string;
+  children: React.ReactNode;
+}
+
+function FormField({
+  label,
+  htmlFor,
+  required = false,
+  error,
+  children,
+}: FormFieldProps) {
+  return (
+    <div className="space-y-2">
+      <label
+        htmlFor={htmlFor}
+        className="block text-sm font-semibold text-slate-700"
+      >
+        {label}
+
+        {required && (
+          <span className="ml-1 text-red-500">*</span>
+        )}
+      </label>
+
+      {children}
+
+      {error && (
+        <p className="text-xs font-medium text-red-600">
+          {error}
+        </p>
+      )}
+    </div>
+  );
+}
+
+function inputClass(hasError: boolean) {
+  return [
+    "h-11 w-full rounded-xl border bg-white px-3 text-sm text-slate-900",
+    "outline-none transition-all",
+    "placeholder:text-slate-400",
+    "focus:ring-2 focus:ring-primary/10",
+    "disabled:cursor-not-allowed disabled:bg-slate-50",
+    hasError
+      ? "border-red-300 focus:border-red-500"
+      : "border-slate-200 focus:border-primary",
+  ].join(" ");
 }
