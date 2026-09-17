@@ -47,25 +47,23 @@ export default function MemberDetailsPage() {
 
     async function loadMember() {
       try {
+        if (!id) {
+          return;
+        }
         setLoading(true);
         setError(null);
 
-        const [memberData, subscriptionData, plansData] =
-          await Promise.all([
-            membersService.getMemberById(id),
-            memberSubscriptionsService.getSubscriptionsByMember(id),
-            membershipPlansService.getPlans(),
-          ]);
+        const [memberData, subscriptionData, plansData] = await Promise.all([
+          membersService.getMemberById(id),
+          memberSubscriptionsService.getSubscriptionsByMember(id),
+          membershipPlansService.getPlans(),
+        ]);
 
         setMember(memberData);
         setSubscriptions(subscriptionData);
         setPlans(plansData);
       } catch (err) {
-        setError(
-          err instanceof Error
-            ? err.message
-            : "Unable to load member.",
-        );
+        setError(err instanceof Error ? err.message : "Unable to load member.");
       } finally {
         setLoading(false);
       }
@@ -134,9 +132,7 @@ export default function MemberDetailsPage() {
     );
   }
 
-  const branch = branches.find(
-    (item) => item.id === member.branch_id,
-  );
+  const branch = branches.find((item) => item.id === member.branch_id);
 
   const fullName = [member.first_name, member.last_name]
     .filter(Boolean)
@@ -145,9 +141,7 @@ export default function MemberDetailsPage() {
   const latestSubscription = subscriptions[0];
 
   const latestPlan = latestSubscription
-    ? plans.find(
-        (plan) => plan.id === latestSubscription.plan_id,
-      )
+    ? plans.find((plan) => plan.id === latestSubscription.plan_id)
     : undefined;
 
   return (
@@ -167,9 +161,7 @@ export default function MemberDetailsPage() {
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex min-w-0 items-center gap-4">
             <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-xl font-bold text-primary">
-              {member.first_name
-                .charAt(0)
-                .toUpperCase()}
+              {member.first_name.charAt(0).toUpperCase()}
             </div>
 
             <div className="min-w-0">
@@ -182,9 +174,7 @@ export default function MemberDetailsPage() {
               </div>
 
               <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-500">
-                <span className="font-mono text-xs">
-                  {member.member_code}
-                </span>
+                <span className="font-mono text-xs">{member.member_code}</span>
 
                 {branch && (
                   <span className="flex items-center gap-1.5">
@@ -198,11 +188,7 @@ export default function MemberDetailsPage() {
 
           <button
             type="button"
-            onClick={() =>
-              navigate(
-                `/dashboard/members/${member.id}/edit`,
-              )
-            }
+            onClick={() => navigate(`/dashboard/members/${member.id}/edit`)}
             className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-sm transition-all hover:opacity-90 hover:shadow-md"
           >
             <Pencil className="h-4 w-4" />
@@ -222,27 +208,13 @@ export default function MemberDetailsPage() {
           />
 
           <div className="mt-6 grid gap-x-6 gap-y-5 sm:grid-cols-2 lg:grid-cols-3">
-            <InfoItem
-              label="First Name"
-              value={member.first_name}
-            />
+            <InfoItem label="First Name" value={member.first_name} />
 
-            <InfoItem
-              label="Last Name"
-              value={member.last_name ?? "—"}
-            />
+            <InfoItem label="Last Name" value={member.last_name ?? "—"} />
 
-            <InfoItem
-              label="Phone"
-              value={member.phone ?? "—"}
-              icon={Phone}
-            />
+            <InfoItem label="Phone" value={member.phone ?? "—"} icon={Phone} />
 
-            <InfoItem
-              label="Email"
-              value={member.email ?? "—"}
-              icon={Mail}
-            />
+            <InfoItem label="Email" value={member.email ?? "—"} icon={Mail} />
 
             <InfoItem
               label="Date of Birth"
@@ -251,11 +223,7 @@ export default function MemberDetailsPage() {
 
             <InfoItem
               label="Gender"
-              value={
-                member.gender
-                  ? capitalize(member.gender)
-                  : "—"
-              }
+              value={member.gender ? capitalize(member.gender) : "—"}
               icon={Users}
             />
 
@@ -271,10 +239,7 @@ export default function MemberDetailsPage() {
               icon={MapPin}
             />
 
-            <InfoItem
-              label="Member Code"
-              value={member.member_code}
-            />
+            <InfoItem label="Member Code" value={member.member_code} />
           </div>
         </section>
 
@@ -316,9 +281,7 @@ export default function MemberDetailsPage() {
           <button
             type="button"
             onClick={() =>
-              navigate(
-                `/dashboard/subscriptions/new?memberId=${member.id}`,
-              )
+              navigate(`/dashboard/subscriptions/new?memberId=${member.id}`)
             }
             className="inline-flex h-9 items-center justify-center gap-2 rounded-xl border border-slate-200 px-3 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
           >
@@ -338,16 +301,13 @@ export default function MemberDetailsPage() {
             </p>
 
             <p className="mx-auto mt-1 max-w-md text-sm text-slate-500">
-              This member does not have a membership
-              subscription yet.
+              This member does not have a membership subscription yet.
             </p>
 
             <button
               type="button"
               onClick={() =>
-                navigate(
-                  `/dashboard/subscriptions/new?memberId=${member.id}`,
-                )
+                navigate(`/dashboard/subscriptions/new?memberId=${member.id}`)
               }
               className="mt-5 inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-90"
             >
@@ -375,41 +335,29 @@ export default function MemberDetailsPage() {
                 </div>
               </div>
 
-              <SubscriptionStatusBadge
-                status={latestSubscription.status}
-              />
+              <SubscriptionStatusBadge status={latestSubscription.status} />
             </div>
 
             {/* Details */}
             <div className="mt-6 grid gap-5 border-t border-slate-200 pt-5 sm:grid-cols-2 lg:grid-cols-4">
               <InfoItem
                 label="Start Date"
-                value={formatDate(
-                  latestSubscription.start_date,
-                )}
+                value={formatDate(latestSubscription.start_date)}
               />
 
               <InfoItem
                 label="End Date"
-                value={formatDate(
-                  latestSubscription.end_date,
-                )}
+                value={formatDate(latestSubscription.end_date)}
               />
 
               <InfoItem
                 label="Amount"
-                value={formatCurrency(
-                  latestSubscription.amount,
-                )}
+                value={formatCurrency(latestSubscription.amount)}
               />
 
               <InfoItem
                 label="Duration"
-                value={
-                  latestPlan
-                    ? `${latestPlan.duration_days} days`
-                    : "—"
-                }
+                value={latestPlan ? `${latestPlan.duration_days} days` : "—"}
               />
             </div>
 
@@ -418,9 +366,7 @@ export default function MemberDetailsPage() {
               <button
                 type="button"
                 onClick={() =>
-                  navigate(
-                    `/dashboard/subscriptions/${latestSubscription.id}`,
-                  )
+                  navigate(`/dashboard/subscriptions/${latestSubscription.id}`)
                 }
                 className="inline-flex h-9 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
               >
@@ -508,9 +454,7 @@ export default function MemberDetailsPage() {
                       </td>
 
                       <td className="px-4 py-3">
-                        <SubscriptionStatusBadge
-                          status={subscription.status}
-                        />
+                        <SubscriptionStatusBadge status={subscription.status} />
                       </td>
                     </tr>
                   );
@@ -534,11 +478,7 @@ interface SectionHeaderProps {
   description: string;
 }
 
-function SectionHeader({
-  icon: Icon,
-  title,
-  description,
-}: SectionHeaderProps) {
+function SectionHeader({ icon: Icon, title, description }: SectionHeaderProps) {
   return (
     <div className="flex items-start gap-3">
       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
@@ -546,13 +486,9 @@ function SectionHeader({
       </div>
 
       <div>
-        <h2 className="text-base font-semibold text-slate-900">
-          {title}
-        </h2>
+        <h2 className="text-base font-semibold text-slate-900">{title}</h2>
 
-        <p className="mt-0.5 text-sm text-slate-500">
-          {description}
-        </p>
+        <p className="mt-0.5 text-sm text-slate-500">{description}</p>
       </div>
     </div>
   );
@@ -564,11 +500,7 @@ interface InfoItemProps {
   icon?: React.ElementType;
 }
 
-function InfoItem({
-  label,
-  value,
-  icon: Icon,
-}: InfoItemProps) {
+function InfoItem({ label, value, icon: Icon }: InfoItemProps) {
   return (
     <div className="min-w-0">
       <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
@@ -576,13 +508,9 @@ function InfoItem({
       </p>
 
       <div className="mt-1.5 flex min-w-0 items-center gap-2">
-        {Icon && (
-          <Icon className="h-3.5 w-3.5 shrink-0 text-slate-400" />
-        )}
+        {Icon && <Icon className="h-3.5 w-3.5 shrink-0 text-slate-400" />}
 
-        <p className="truncate text-sm font-medium text-slate-800">
-          {value}
-        </p>
+        <p className="truncate text-sm font-medium text-slate-800">{value}</p>
       </div>
     </div>
   );
@@ -592,9 +520,7 @@ interface MemberStatusBadgeProps {
   status: Member["status"];
 }
 
-function MemberStatusBadge({
-  status,
-}: MemberStatusBadgeProps) {
+function MemberStatusBadge({ status }: MemberStatusBadgeProps) {
   const statusClasses = {
     active: "bg-emerald-50 text-emerald-700 ring-emerald-600/20",
     blocked: "bg-red-50 text-red-700 ring-red-600/20",
@@ -630,16 +556,11 @@ interface SubscriptionStatusBadgeProps {
   status: MemberSubscription["status"];
 }
 
-function SubscriptionStatusBadge({
-  status,
-}: SubscriptionStatusBadgeProps) {
+function SubscriptionStatusBadge({ status }: SubscriptionStatusBadgeProps) {
   const statusClasses = {
-    active:
-      "bg-emerald-50 text-emerald-700 ring-emerald-600/20",
-    expired:
-      "bg-orange-50 text-orange-700 ring-orange-600/20",
-    cancelled:
-      "bg-red-50 text-red-700 ring-red-600/20",
+    active: "bg-emerald-50 text-emerald-700 ring-emerald-600/20",
+    expired: "bg-orange-50 text-orange-700 ring-orange-600/20",
+    cancelled: "bg-red-50 text-red-700 ring-red-600/20",
   };
 
   return (
@@ -650,9 +571,7 @@ function SubscriptionStatusBadge({
         statusClasses[status],
       ].join(" ")}
     >
-      {status === "active" && (
-        <CheckCircle2 className="h-3.5 w-3.5" />
-      )}
+      {status === "active" && <CheckCircle2 className="h-3.5 w-3.5" />}
 
       {capitalize(status)}
     </span>
